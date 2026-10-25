@@ -1,0 +1,14 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["11434:11434"]
+    volumes: ["ollama:/root/.ollama"]
+  control-plane:
+    build: .
+    depends_on: [ollama]
+    environment:
+      ACP_OLLAMA_URL: http://ollama:11434
+      ACP_FRONTIER_API_KEY: ${ACP_FRONTIER_API_KEY:-}
+    command: ["demo"]
+volumes:
+  ollama:
