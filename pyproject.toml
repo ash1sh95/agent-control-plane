@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-control-plane"
+version = "0.1.0"
+description = "A judge-before-action control plane for AI agents: policy gate, rate limits, dedupe, human approvals, audit log, model routing and evals."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Ashish Arun" }]
+keywords = ["ai-agents", "llm", "guardrails", "policy", "langgraph", "databricks", "evals"]
+dependencies = []
+
+[project.optional-dependencies]
+langgraph = ["langgraph>=0.2"]
+dev = ["pytest>=8", "ruff>=0.5"]
+
+[project.scripts]
+acp = "agent_control_plane.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_unused_ignores = false
+
+[tool.ruff.lint.per-file-ignores]
+# Databricks notebooks use runtime-injected globals (dbutils, spark, display)
+"databricks/01_*.py" = ["F821", "I001", "BLE001"]
