@@ -1,0 +1,52 @@
+# Databricks Asset Bundle skeleton -- copy to the REPO ROOT to use.
+# Workspace-agnostic: host/auth come from your Databricks CLI profile
+# (`databricks configure`), never from values committed here.
+bundle:
+  name: agent-control-plane
+
+variables:
+  catalog:
+    default: main
+  schema:
+    default: acp_demo
+  experiment:
+    default: /Shared/agent-control-plane
+
+resources:
+  jobs:
+    acp_eval_job:
+      name: "acp-gate-eval"
+      tasks:
+        - task_key: run_evals
+          notebook_task:
+            notebook_path: ./databricks/01_agent_control_plane_on_databricks
+            base_parameters:
+              catalog: ${var.catalog}
+              schema: ${var.schema}
+              experiment: ${var.experiment}
+          # Serverless by default: no cluster to configure or leak.
+          environment_key: default
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "2"
+      schedule:            # evals as a regression gate, weekly
+        quartz_cron_expression: "0 0 6 ? * MON"
+        timezone_id: UTC
+        pause_status: UNPAUSED
+
+# Coming next (intentionally commented): a Databricks App hosting the
+# approval queue so humans approve/deny from a browser or phone.
+# apps:
+#   acp_approvals:
+#     name: acp-approvals
+#     source_code_path: ./databricks/app
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      schema: acp_demo_dev
+  prod:
+    mode: production
