@@ -1,0 +1,4 @@
+# Core has zero required dependencies (stdlib only).
+# Optional:
+#   pip install -e ".[langgraph]"   # LangGraph agent wrapper
+#   pip install -e ".[dev]"         # pytest + ruff
